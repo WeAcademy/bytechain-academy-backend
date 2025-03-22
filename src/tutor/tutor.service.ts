@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tutor } from './entities/tutor.entity';
@@ -18,44 +14,23 @@ export class TutorService {
     private readonly tutorRepository: Repository<Tutor>,
   ) {}
 
-  async create(createTutorDto: CreateTutorDto): Promise<Tutor> {
-    // Check if email already exists
-    const existingTutor = await this.tutorRepository.findOne({
-      where: { email: createTutorDto.email },
-    });
-
-    if (existingTutor) {
-      throw new ConflictException('Email already exists');
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const tutor = this.tutorRepository.create(createTutorDto);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return await this.tutorRepository.save(tutor);
+  create(createTutorDto: CreateTutorDto) {
+    return 'This action adds a new tutor';
   }
 
-  async findAll(): Promise<Tutor[]> {
-    return await this.tutorRepository.find();
+  findAll() {
+    return `This action returns all tutor`;
   }
 
-  async findOne(id: string): Promise<Tutor> {
-    const tutor = await this.tutorRepository.findOne({ where: { id } });
-    if (!tutor) {
-      throw new NotFoundException(`Tutor with ID "${id}" not found`);
-    }
-    return tutor;
+  findOne(id: number) {
+    return `This action returns a #${id} tutor`;
   }
 
-  async update(id: string, updateTutorDto: UpdateTutorDto): Promise<Tutor> {
-    const tutor = await this.findOne(id);
-    Object.assign(tutor, updateTutorDto);
-    return await this.tutorRepository.save(tutor);
+  update(id: number, updateTutorDto: UpdateTutorDto) {
+    return `This action updates a #${id} tutor`;
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.tutorRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Tutor with ID "${id}" not found`);
-    }
+  remove(id: number) {
+    return `This action removes a #${id} tutor`;
   }
 }
