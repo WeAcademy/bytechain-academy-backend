@@ -39,7 +39,7 @@ export class StudentController {
      /**
    *Update a student
    * @param id - Student ID
-   * @param updateStudentDto - Data to update
+   * @param updateStudentDto - student data to update
    */
   @Patch(':id')
   public async updateStudent(
@@ -51,7 +51,7 @@ export class StudentController {
 
  /**
    *Delete a student
-   * @param id - Student ID
+   * @param id studentId
    */
   @Delete(':id')
   public async deleteStudent(@Param('id') id: string): Promise<{ message: string }> {
