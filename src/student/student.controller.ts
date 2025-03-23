@@ -13,7 +13,7 @@ export class StudentController {
    * @param createStudentDto
    */
   @Post()
-  async createStudent(
+  public async createStudent(
     @Body() createStudentDto: CreateStudentDto,
   ): Promise<Student> {
     return this.studentService.createStudent(createStudentDto);
