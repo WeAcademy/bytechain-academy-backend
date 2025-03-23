@@ -22,7 +22,7 @@ export class CreateStudentService {
    */
   public async create(createStudentDto: CreateStudentDto): Promise<Student> {
     try {
-      // ✅ Check if email already exists
+      //Check if email already exists
       const existingStudent = await this.studentRepository.findOne({
         where: { email: createStudentDto.email },
       });
@@ -31,10 +31,10 @@ export class CreateStudentService {
         throw new ConflictException('Email already exists');
       }
 
-      // ✅ Create student instance
+      //Create student instance
       const newStudent = this.studentRepository.create(createStudentDto);
 
-      // ✅ Save the student (password gets hashed automatically via @BeforeInsert)
+      //Save the student (password gets hashed automatically via @BeforeInsert)
       return await this.studentRepository.save(newStudent);
     } catch (error) {
       throw new InternalServerErrorException('Error creating student');
