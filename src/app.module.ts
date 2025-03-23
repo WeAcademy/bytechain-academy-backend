@@ -4,8 +4,6 @@ import { AppService } from './app.service';
 import { StudentModule } from './student/student.module';
 import { TutorModule } from './tutor/tutor.module';
 
-
-
 @Module({
   imports: [StudentModule, TutorModule],
   controllers: [AppController],
