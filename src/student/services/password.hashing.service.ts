@@ -8,7 +8,6 @@ export abstract class PasswordHashingService {
    * @returns Promise resolving to the hashed password
    */
   public abstract hashPassword(password: string): Promise<string>;
-  
   /**
    * Compares a plain text password against a hashed password
    * @param plainTextPassword Plain text password to check
@@ -17,7 +16,3 @@ export abstract class PasswordHashingService {
    */
   // abstract comparePasswords(plainTextPassword: string, hashedPassword: string): Promise<boolean>;
 }
-
-
-
-  

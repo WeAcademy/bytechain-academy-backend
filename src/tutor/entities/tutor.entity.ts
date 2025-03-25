@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -48,7 +46,6 @@ export class Tutor {
   @BeforeInsert()
   async hashPassword(): Promise<void> {
     if (this.password) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.password = await bcrypt.hash(this.password, 10);
     }
   }

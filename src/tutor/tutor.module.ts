@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TutorService } from './tutor.service';
+import { TutorService } from './services/tutor.service';
 import { TutorController } from './tutor.controller';
 import { Tutor } from './entities/tutor.entity';
+import { PasswordHashingService } from './services/password.hashing.service';
 
 @Module({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   imports: [TypeOrmModule.forFeature([Tutor])],
   controllers: [TutorController],
-  providers: [TutorService],
+  providers: [TutorService, PasswordHashingService],
   exports: [TutorService],
 })
 export class TutorModule {}

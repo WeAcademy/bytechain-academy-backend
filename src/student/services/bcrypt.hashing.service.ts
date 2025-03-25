@@ -21,7 +21,10 @@ export class BcryptHashingService implements PasswordHashingService {
    * @param hashedPassword Hashed password to compare against
    * @returns Promise resolving to boolean indicating if passwords match
    */
-  async comparePasswords(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
+  async comparePasswords(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return bcrypt.compare(plainTextPassword, hashedPassword);
   }
 }
