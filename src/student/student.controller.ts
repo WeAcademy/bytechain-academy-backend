@@ -2,9 +2,13 @@ import { Controller, Post, Body, Get, Param, Delete, Patch } from '@nestjs/commo
 import { StudentService } from './services/student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { Student } from '../student/entities/student.entity';
+import { Roles } from 'src/roles/roles.decorator';
+import { UserRole } from 'src/roles/roles.enum';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
+
 @Controller('/api/v1/student')
+@Roles(UserRole.STUDENT) 
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
