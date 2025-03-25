@@ -1,7 +1,7 @@
-import { 
-  Injectable, 
-  ConflictException, 
-  InternalServerErrorException 
+import {
+  Injectable,
+  ConflictException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -36,7 +36,7 @@ export class CreateStudentService {
 
       //Save the student (password gets hashed automatically via @BeforeInsert)
       return await this.studentRepository.save(newStudent);
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Error creating student');
     }
   }
