@@ -54,3 +54,14 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Local runtime data
+/database.sqlite
+/database.sqlite-*
+/lint_output.txt
+
+# User-uploaded files (keep the directories, never their contents)
+/uploads/avatars/*
+!/uploads/avatars/.gitkeep
+/uploads/certificates/*
+!/uploads/certificates/.gitkeep
