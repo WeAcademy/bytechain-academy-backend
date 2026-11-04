@@ -5,7 +5,7 @@ NestJS backend powering authentication, courses, lessons, progress, DAO voting, 
 ## Prerequisites
 
 - Node.js 20+
-- npm 10+
+- npm 10+ (the only supported package manager; `package-lock.json` is committed)
 - PostgreSQL 15+ (or Docker Compose from project root)
 
 ## Local setup
