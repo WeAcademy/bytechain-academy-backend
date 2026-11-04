@@ -18,7 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed:currencies": "ts-node -r tsconfig-paths/register src/currencies/seeds/run-seed.ts"
+    "seed:currencies": "ts-node -r tsconfig-paths/register src/currencies/seeds/run-seed.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate --dataSource src/data-source.ts",
+    "migration:create": "typeorm-ts-node-commonjs migration:create",
+    "migration:run": "typeorm-ts-node-commonjs migration:run --dataSource src/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert --dataSource src/data-source.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.1.0",
@@ -32,6 +36,8 @@
     "@nestjs/schedule": "^6.1.1",
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/throttler": "^6.5.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "@stellar/stellar-sdk": "^13.1.0",
     "@types/bcrypt": "^6.0.0",
     "@types/nodemailer": "^7.0.11",
     "@types/passport-jwt": "^4.0.1",
@@ -52,8 +58,10 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sqlite3": "^5.1.7",
+    "pg": "^8.13.0",
     "typeorm": "^0.3.28",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "axios": "^1.7.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

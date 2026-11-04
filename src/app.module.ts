@@ -68,11 +68,25 @@ import { WebhooksModule } from './webhooks/webhooks.module';
       }),
       validationOptions: { abortEarly: false },
     }),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'database.sqlite',
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DB_HOST'),
+        port: config.get<number>('DB_PORT'),
+        username: config.get<string>('DB_USERNAME'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_NAME'),
+        autoLoadEntities: true,
+        synchronize: false,
+        migrations: [__dirname + '/migrations/*{.ts,.js}'],
+        migrationsRun: true,
+        ssl:
+          config.get<string>('NODE_ENV') === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
+      }),
     }),
     LoggerModule.forRootAsync({
       inject: [ConfigService],

@@ -110,7 +110,28 @@ npm run test:cov
 npm run build
 ```
 
-## PostgreSQL with Docker Compose (from repo root)
+## Database migrations
+
+The app uses TypeORM migrations (no `synchronize`). Migrations run automatically on startup.
+
+```bash
+# Generate a migration from entity changes
+npm run migration:generate -- src/migrations/MyMigration
+
+# Run pending migrations
+npm run migration:run
+
+# Revert the last migration
+npm run migration:revert
+```
+
+After starting Postgres with `docker compose up -d postgres`, run migrations:
+
+```bash
+npm run migration:run
+```
+
+## PostgreSQL with Docker Compose
 
 ```bash
 docker compose up -d postgres
