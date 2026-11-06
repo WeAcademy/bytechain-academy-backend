@@ -11,6 +11,10 @@ jobs:
     name: Lint, Build, Unit & E2E Tests
     runs-on: ubuntu-latest
 
+    env:
+      JWT_SECRET: ci-test-secret-minimum-32-characters-long
+      NODE_ENV: test
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,4 +38,4 @@ jobs:
         run: npm run test
 
       - name: E2E tests
-        run: npm run test:e2e
+        run: npm run test:e2e -- --runInBand --forceExit
