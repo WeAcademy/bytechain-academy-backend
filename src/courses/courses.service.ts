@@ -95,7 +95,7 @@ export class CoursesService {
         .map((t) => t.trim())
         .filter(Boolean);
       tagList.forEach((tag, i) => {
-        qb.andWhere(`course.tags LIKE :tag${i}`, { [`tag${i}`]: `%${tag}%` });
+        qb.andWhere(`course.tags ILIKE :tag${i}`, { [`tag${i}`]: `%${tag}%` });
       });
     }
 

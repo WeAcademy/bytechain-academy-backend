@@ -9,7 +9,7 @@ A complete, production-ready authentication system built with NestJS, featuring 
 - **Password Recovery** with time-limited reset tokens
 - **JWT Authentication** with reusable guard system
 - **Role-based Access Control** ready
-- **SQLite Database** with TypeORM
+- **PostgreSQL Database** with TypeORM (schema managed by migrations)
 - **Input Validation** with class-validator
 - **Password Security** with bcrypt hashing
 
@@ -148,9 +148,12 @@ cp .env.example .env
 Update `.env` with your configuration:
 ```env
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-DB_TYPE=sqlite
-DB_DATABASE=database.sqlite
-PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=bytechain
+PORT=3001
 ```
 
 ### Running the Application

@@ -98,8 +98,7 @@ export class NotificationsService {
       .createQueryBuilder()
       .update(Notification)
       .set({ isRead: true })
-      .where('userId = :userId', { userId })
-      .andWhere('isRead = :isRead', { isRead: false })
+      .where({ userId, isRead: false })
       .execute();
 
     return { updatedCount: unreadNotifications.length };

@@ -25,6 +25,7 @@ import { EmailModule } from './email/email.module';
 import { LoggerModule } from 'nestjs-pino';
 import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { buildDatabaseOptions } from './database/database.config';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 
@@ -46,6 +47,10 @@ import { WebhooksModule } from './webhooks/webhooks.module';
         DB_USERNAME: Joi.string().default('postgres'),
         DB_PASSWORD: Joi.string().allow('').default(''),
         DB_NAME: Joi.string().default('bytechain'),
+        // true: verify the server certificate (managed Postgres hosts).
+        DB_SSL: Joi.boolean().default(false),
+        // true: apply pending migrations when the app starts.
+        DB_MIGRATIONS_RUN: Joi.boolean().default(false),
 
         FRONTEND_URL: Joi.string().uri().default('http://localhost:3000'),
         APP_URL: Joi.string().uri().default('http://localhost:3001'),
@@ -68,11 +73,21 @@ import { WebhooksModule } from './webhooks/webhooks.module';
       }),
       validationOptions: { abortEarly: false },
     }),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'database.sqlite',
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        ...buildDatabaseOptions({
+          DB_HOST: config.getOrThrow<string>('DB_HOST'),
+          DB_PORT: config.getOrThrow<number>('DB_PORT'),
+          DB_USERNAME: config.getOrThrow<string>('DB_USERNAME'),
+          DB_PASSWORD: config.get<string>('DB_PASSWORD', ''),
+          DB_NAME: config.getOrThrow<string>('DB_NAME'),
+          DB_SSL: config.get<boolean>('DB_SSL', false),
+        }),
+        autoLoadEntities: true,
+        // Never synchronize: the schema is changed by migrations only.
+        migrationsRun: config.get<boolean>('DB_MIGRATIONS_RUN', false),
+      }),
     }),
     LoggerModule.forRootAsync({
       inject: [ConfigService],

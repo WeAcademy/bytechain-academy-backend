@@ -440,7 +440,7 @@ export class CertificateService {
     if (search && search.trim()) {
       const term = `%${search.trim()}%`;
       qb.andWhere(
-        '(cert.recipientName LIKE :term OR cert.recipientEmail LIKE :term OR cert.courseOrProgram LIKE :term)',
+        '(cert.recipientName ILIKE :term OR cert.recipientEmail ILIKE :term OR cert.courseOrProgram ILIKE :term)',
         { term },
       );
     }

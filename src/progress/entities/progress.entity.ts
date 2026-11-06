@@ -29,7 +29,7 @@ export class Progress {
   @Column({ type: 'boolean', default: false })
   completed: boolean;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   completedAt: Date | null;
 
   @CreateDateColumn()

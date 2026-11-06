@@ -31,7 +31,7 @@ export class CurrenciesService {
 
     if (search) {
       queryBuilder.andWhere(
-        '(currency.name LIKE :search OR currency.symbol LIKE :search)',
+        '(currency.name ILIKE :search OR currency.symbol ILIKE :search)',
         { search: `%${search}%` },
       );
     }

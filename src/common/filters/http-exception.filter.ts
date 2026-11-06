@@ -7,6 +7,19 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { QueryFailedError } from 'typeorm';
+
+/**
+ * PostgreSQL rejects an id that is not a valid UUID with an error (SQLite
+ * accepted anything). Such an id can never match a record, so it is a plain
+ * "not found", not a server error.
+ */
+export function isInvalidUuidError(exception: unknown): boolean {
+  return (
+    exception instanceof QueryFailedError &&
+    /invalid input syntax for type uuid/i.test(exception.message)
+  );
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -19,7 +32,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | string[] = 'Internal server error';
 
-    if (exception instanceof HttpException) {
+    if (isInvalidUuidError(exception)) {
+      statusCode = HttpStatus.NOT_FOUND;
+      message = 'Resource not found';
+    } else if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
