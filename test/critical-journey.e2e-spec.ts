@@ -6,7 +6,7 @@
  *   → (student) enroll → complete lesson → submit quiz → certificate issued
  *
  * The app is bootstrapped exactly once per file with the real AppModule
- * (SQLite file-based DB, same as development). All created records are
+ * (PostgreSQL, using the DB_* variables; migrations must be applied). All created records are
  * deleted in afterAll to keep the database clean between runs.
  *
  * Note: global prefix, ValidationPipe, and exception filter are applied

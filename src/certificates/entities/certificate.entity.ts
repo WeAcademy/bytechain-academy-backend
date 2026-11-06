@@ -56,10 +56,10 @@ export class Certificate {
   /**
    * Certificate lifecycle
    */
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamptz' })
   issuedAt: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   expiresAt: Date;
 
   @Column({ default: true })

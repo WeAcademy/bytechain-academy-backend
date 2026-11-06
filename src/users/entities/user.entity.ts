@@ -72,14 +72,14 @@ export class User {
   @Column({ type: 'int', default: 0 })
   longestStreak: number;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   lastActiveAt: Date | null;
 
   @Column({ type: 'varchar', nullable: true })
   @Exclude()
   resetToken: string | null;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   @Exclude()
   resetTokenExpires: Date | null;
 
@@ -87,7 +87,7 @@ export class User {
   @Exclude()
   failedLoginAttempts: number;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   @Exclude()
   lockedUntil: Date | null;
 

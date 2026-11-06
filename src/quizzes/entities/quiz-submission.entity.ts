@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Quiz } from './quiz.entity';
+import { decimalToNumber } from '../../common/transformers/decimal.transformer';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('quiz_submissions')
@@ -27,7 +28,12 @@ export class QuizSubmission {
   @Column('simple-json')
   answers: Record<string, string>; // questionId -> answer
 
-  @Column('decimal', { precision: 5, scale: 2 })
+  @Column('decimal', {
+    precision: 5,
+    scale: 2,
+    // PostgreSQL returns decimals as strings; this entity promises a number.
+    transformer: decimalToNumber,
+  })
   score: number; // Percentage score (0-100)
 
   @Column()

@@ -41,7 +41,7 @@ export class DAOProposal {
   })
   status: ProposalStatus;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamptz' })
   votingDeadline: Date;
 
   @Column({ type: 'int', default: 0 })
@@ -59,7 +59,7 @@ export class DAOProposal {
   @Column({ type: 'text', nullable: true })
   moderationReason: string | null;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   moderatedAt: Date | null;
 
   @Column({ type: 'varchar', nullable: true })

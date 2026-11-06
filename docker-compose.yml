@@ -1,0 +1,26 @@
+# Local development database. Start it with:  docker compose up -d postgres
+# The settings come from .env (DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT), with
+# the same defaults as .env.example, so the app and the container always agree.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bytechain-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-bytechain}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - bytechain_pgdata:/var/lib/postgresql/data
+      # Runs once, on first start, to create the separate database for e2e tests.
+      - ./docker/postgres/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-bytechain}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bytechain_pgdata:

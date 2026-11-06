@@ -19,7 +19,15 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed:currencies": "ts-node -r tsconfig-paths/register src/currencies/seeds/run-seed.ts"
+    "seed:currencies": "ts-node -r tsconfig-paths/register src/currencies/seeds/run-seed.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "npm run typeorm -- migration:generate -d src/database/data-source.ts",
+    "migration:create": "npm run typeorm -- migration:create",
+    "migration:run": "npm run typeorm -- migration:run -d src/database/data-source.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d src/database/data-source.ts",
+    "migration:show": "npm run typeorm -- migration:show -d src/database/data-source.ts",
+    "migration:run:prod": "typeorm migration:run -d dist/database/data-source.js",
+    "migration:check": "npm run typeorm -- migration:generate --check -d src/database/data-source.ts src/database/migrations/Check"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.1.0",
@@ -38,6 +46,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/nodemailer": "^7.0.11",
     "@types/passport-jwt": "^4.0.1",
+    "axios": "^1.7.0",
     "bcrypt": "^6.0.0",
     "cache-manager": "^7.2.8",
     "class-transformer": "^0.5.1",
@@ -49,15 +58,14 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pdfkit": "^0.18.0",
+    "pg": "^8.23.1",
     "pino-http": "^11.0.0",
     "pino-pretty": "^13.1.3",
     "qrcode": "^1.5.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.28",
-    "uuid": "^14.0.0",
-    "axios": "^1.7.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -71,6 +79,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/pdfkit": "^0.17.5",
+    "@types/pg": "^8.23.1",
     "@types/qrcode": "^1.5.6",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",

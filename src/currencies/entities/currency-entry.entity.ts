@@ -30,7 +30,7 @@ export class CurrencyEntry {
   symbol: string;
 
   @Column({
-    type: 'simple-enum',
+    type: 'enum',
     enum: CurrencyType,
     default: CurrencyType.CRYPTO,
   })

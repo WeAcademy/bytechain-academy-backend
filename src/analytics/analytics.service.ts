@@ -218,20 +218,27 @@ export class AnalyticsService {
   }
 
   private async _fetchLearnerActivity(): Promise<LearnerActivityPointDto[]> {
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    const start = new Date();
-    start.setDate(start.getDate() - 29);
-    start.setHours(0, 0, 0, 0);
+    // Everything here is in UTC: the SQL groups by the UTC date, and the keys
+    // below come from toISOString(). Mixing in local time shifts every day by
+    // one on servers east of UTC.
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth();
+    const day = now.getUTCDate();
+    const end = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
+    const start = new Date(Date.UTC(year, month, day - 29));
 
     const rows = await this.progressRepository
       .createQueryBuilder('p')
-      .select('DATE(p.completedAt)', 'activityDate')
+      .select(
+        `TO_CHAR(p.completedAt AT TIME ZONE 'UTC', 'YYYY-MM-DD')`,
+        'activityDate',
+      )
       .addSelect('COUNT(DISTINCT p.userId)', 'activeUsers')
       .where('p.completed = :completed', { completed: true })
       .andWhere('p.completedAt BETWEEN :start AND :end', { start, end })
-      .groupBy('DATE(p.completedAt)')
-      .orderBy('activityDate', 'ASC')
+      .groupBy(`TO_CHAR(p.completedAt AT TIME ZONE 'UTC', 'YYYY-MM-DD')`)
+      .orderBy('"activityDate"', 'ASC') // quoted: Postgres lowercases unquoted aliases
       .getRawMany<{ activityDate: string; activeUsers: string }>();
 
     const rowMap = new Map(
@@ -239,8 +246,13 @@ export class AnalyticsService {
     );
     const payload: LearnerActivityPointDto[] = [];
     for (let i = 0; i < 30; i++) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
+      const date = new Date(
+        Date.UTC(
+          start.getUTCFullYear(),
+          start.getUTCMonth(),
+          start.getUTCDate() + i,
+        ),
+      );
       const dateKey = date.toISOString().slice(0, 10);
       payload.push({
         date: dateKey,

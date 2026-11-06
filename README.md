@@ -6,7 +6,7 @@ NestJS backend powering authentication, courses, lessons, progress, DAO voting, 
 
 - Node.js 20+
 - npm 10+ (the only supported package manager; `package-lock.json` is committed)
-- PostgreSQL 15+ (or Docker Compose from project root)
+- PostgreSQL 15+ (or Docker, to run the Compose file in this repo)
 
 ## Local setup
 
@@ -24,13 +24,26 @@ cp .env.example .env
 
 Update `.env` values as needed.
 
-### 3) Start the backend
+### 3) Start PostgreSQL and create the schema
+
+The app needs a running PostgreSQL database; it does **not** create tables by itself (`synchronize` is off). With Docker:
+
+```bash
+docker compose up -d postgres   # starts Postgres with the DB_* values from .env
+npm run migration:run           # creates the tables
+```
+
+Without Docker, create an empty database with your own PostgreSQL (for example `createdb bytechain`), put its connection details in `.env`, and run `npm run migration:run`.
+
+### 4) Start the backend
 
 ```bash
 npm run start:dev
 ```
 
 Backend runs on `http://localhost:3001` by default.
+
+Optional: load the sample currency data with `npm run seed:currencies` (after the migration).
 
 ## Environment variables
 
@@ -42,11 +55,13 @@ All variables below match `.env.example` exactly.
 | `PORT` | Yes | `3001` | HTTP port for the API server. |
 | `JWT_SECRET` | Yes | `change_me_to_a_random_secret_at_least_32_chars` | Secret key used to sign JWTs (minimum 32 chars). |
 | `JWT_EXPIRES_IN` | Yes | `7d` | Access token expiration. |
-| `DB_HOST` | Yes | `localhost` | PostgreSQL host for deployment-ready DB config. |
+| `DB_HOST` | Yes | `localhost` | PostgreSQL host. |
 | `DB_PORT` | Yes | `5432` | PostgreSQL port. |
 | `DB_USERNAME` | Yes | `postgres` | PostgreSQL username. |
 | `DB_PASSWORD` | Yes | `postgres` | PostgreSQL password. |
 | `DB_NAME` | Yes | `bytechain` | PostgreSQL database name. |
+| `DB_SSL` | Optional | `false` | `true` to require TLS and verify the server certificate (many managed hosts need it). |
+| `DB_MIGRATIONS_RUN` | Optional | `false` | `true` to apply pending migrations when the app starts. Otherwise run `npm run migration:run`. |
 | `FRONTEND_URL` | Yes | `http://localhost:3000` | Allowed frontend origin(s) for CORS. Multiple origins can be comma-separated. |
 | `APP_URL` | Yes | `http://localhost:3001` | Public backend base URL used in generated links (for example certificate links). |
 | `THROTTLE_TTL` | Yes | `60` | Rate limit window in seconds. |
@@ -110,21 +125,40 @@ npm run test:cov
 npm run build
 ```
 
-## PostgreSQL with Docker Compose (from repo root)
+## Database and migrations
+
+The schema is managed with TypeORM **migrations**. `synchronize` is permanently off, so the app never rewrites your tables on startup.
+
+| Command | What it does |
+| --- | --- |
+| `npm run migration:run` | Apply pending migrations |
+| `npm run migration:revert` | Undo the last migration |
+| `npm run migration:show` | List migrations and which are applied |
+| `npm run migration:generate -- src/database/migrations/DescribeTheChange` | Generate a migration from entity changes |
+| `npm run migration:check` | Fail if entities and migrations are out of sync (CI runs this) |
+
+When you change an entity, generate a migration, **read the generated SQL**, and commit the entity and the migration together. Never edit a migration that has been merged; add a new one. In production (compiled code) use `npm run migration:run:prod`.
+
+### Local database with Docker Compose
+
+`docker-compose.yml` runs PostgreSQL 16 using the `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` and `DB_PORT` from `.env` (defaults match `.env.example`), and on first start also creates a separate `bytechain_test` database for the e2e tests:
 
 ```bash
 docker compose up -d postgres
+docker compose down        # stop (data is kept in a Docker volume)
+docker compose down -v     # stop and delete the data
 ```
 
-Recommended `.env` values for local Compose:
+### Running the tests
 
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=bytechain
+Unit tests do not need a database. The e2e tests do: point them at a **separate** database so they never touch your development data, and migrate it first:
+
+```bash
+DB_NAME=bytechain_test npm run migration:run
+DB_NAME=bytechain_test npm run test:e2e -- --runInBand
 ```
+
+CI does the same against a PostgreSQL service container and also runs `npm run migration:check`.
 
 ## Production deployment on Railway
 
@@ -156,7 +190,9 @@ Set production-specific values for:
 ### 3) Build and start commands
 
 - Build command: `npm run build`
-- Start command: `npm run start:prod`
+- Start command: `npm run migration:run:prod && npm run start:prod`
+
+The migration step creates and updates the tables (the app never does that itself). Alternatively set `DB_MIGRATIONS_RUN=true` and keep `npm run start:prod`. If your Postgres host requires TLS, also set `DB_SSL=true`.
 
 ### 4) Verify deployment
 

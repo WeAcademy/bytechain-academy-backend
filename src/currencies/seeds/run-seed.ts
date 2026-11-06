@@ -1,17 +1,15 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import dataSource from '../../database/data-source';
 import {
   CurrencyEntry,
   CurrencyType,
   HistoricalPrice,
 } from '../entities/currency-entry.entity';
 
-const AppDataSource = new DataSource({
-  type: 'sqlite',
-  database: 'database.sqlite',
-  entities: [CurrencyEntry],
-  synchronize: true,
-});
+// Same connection as the app and the migrations (DB_* variables). The schema must
+// already exist: run `npm run migration:run` first.
+const AppDataSource = dataSource;
 
 const CURRENCIES: Partial<CurrencyEntry>[] = [
   {
